@@ -11,4 +11,5 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/install)
 
 set(ROS2_DIR /ros2-linux)
 
+add_subdirectory(dependencies)
 add_subdirectory(src)

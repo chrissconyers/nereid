@@ -1,0 +1,25 @@
+
+add_library(
+    ros2
+    INTERFACE
+)
+target_include_directories(
+    ros2
+    INTERFACE
+    ${ROS2_DIR}/include
+)
+target_link_directories(
+    ros2
+    INTERFACE
+    ${ROS2_DIR}/lib
+)
+target_link_libraries(
+    ros2
+    INTERFACE
+    rclcpp
+    rcl
+    rcutils
+    tracetools
+    std_msgs__rosidl_typesupport_cpp
+    pthread
+)
