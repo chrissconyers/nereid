@@ -1,3 +1,6 @@
 {
-    "cmake.buildDirectory": "${workspaceFolder}/build/${buildKit}-${buildType}"
+    "cmake.buildDirectory": "${workspaceFolder}/build/${buildKit}-${buildType}",
+    "files.associations": {
+        "thread": "cpp"
+    }
 }

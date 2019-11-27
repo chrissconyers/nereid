@@ -56,3 +56,14 @@ RUN mkdir /cmake \
     && ./bootstrap \
     && make install \
     && rm -rf /cmake
+
+# install nlohmann json
+ARG nlohmann_json_version=456478b3c50d
+RUN git clone https://github.com/nlohmann/json.git /json \
+    && mkdir /json/build \
+    && cd /json/build \
+    && git checkout $nlohmann_json_version \
+    && cmake .. -DBUILD_TESTING=OFF \
+    && make install \
+    && cd / \
+    && rm -rf /json
