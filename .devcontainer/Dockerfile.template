@@ -1,0 +1,19 @@
+
+# use externally supplied repo as our base
+# this image will extend the base for cleaner integration with vscode tools
+FROM nereid-dev
+
+# configuration of a "vscode" user tied to a local user identity
+# the docker container will be run as vscode, but changes will be attributed to the
+# local user on the host machine
+# (requires running setup.sh to autocomplete the variables below)
+ARG USERNAME=vscode
+ARG USER_UID=#USER_UID#
+ARG USER_GID=#USER_GID#
+
+# Create the non-root user - see https://aka.ms/vscode-remote/containers/non-root-user.
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    # [Optional] Add sudo support for non-root user
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME

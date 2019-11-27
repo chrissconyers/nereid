@@ -1,0 +1,25 @@
+{
+    "name": "nereid-dev",
+    "dockerFile": "Dockerfile",
+    "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake"
+    ],
+    "runArgs": [
+        // run the container as the internal "vscode" user
+        "-u", "vscode",
+
+        // mount this users .ssh directory to gain access to ssh keys for repo access
+        "-v", "${env:HOME}/.ssh:/home/vscode/.ssh:ro",
+
+        // use the focus development docker network
+        "--net=host",
+
+        // the following makes debugging with gdb possible by lifting default Docker security restrictions
+        "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"
+    ],
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    }
+}
