@@ -5,9 +5,6 @@
 #include "DIPC.h"
 #include "rk4.h"
 
-#include <fmt/core.h>
-#include <nlohmann/json.hpp>
-
 
 namespace nereid
 {
@@ -16,10 +13,7 @@ class DIPCSim::PrivateImpl
 {
 public:
     DIPC dipc;
-
-    PrivateImpl(void)
-    {
-    }
+    State state;
 };
 
 
@@ -32,22 +26,20 @@ DIPCSim::~DIPCSim(void)
 {
 }
 
-std::string DIPCSim::publishState(void)
+void DIPCSim::init(double x, double theta_1, double theta_2)
 {
-    static int count = 0;
+    impl_->state = (Eigen::VectorXd(6) << x, 0.0, theta_1, 0.0, theta_2, 0.0).finished();
+}
 
-    
-    nlohmann::json j;
-    j["name"] = "tarquin";
-    j["id"] = ++count;
-    std::string msg_str = j.dump();
+void DIPCSim::tick(double dt)
+{
+    State new_state = propagation::rk4(impl_->state, dt, impl_->dipc);
+    impl_->state = new_state;
+}
 
-    //rclcpp::Clock clock;
-    //auto x = clock.now();
-    //fmt::print("time: {} seconds\n", x.seconds());
-
-    fmt::print("publishing '{}'\n", msg_str);
-    return msg_str;
+std::string DIPCSim::stateStr(void)
+{
+    return DIPC::to_json(impl_->state);
 }
 
 }
