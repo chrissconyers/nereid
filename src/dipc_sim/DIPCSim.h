@@ -1,20 +1,22 @@
 
 #pragma once
 
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+#include <memory>
+#include <string>
 
-namespace ssci
+
+namespace nereid
 {
-    class DIPCSim : public rclcpp::Node
+    class DIPCSim
     {
     public:
         DIPCSim(void);
+        ~DIPCSim(void);
 
-        void publishState(void);
+        std::string publishState(void);
 
     private:
-        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-        //rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+        class PrivateImpl;
+        std::unique_ptr<PrivateImpl> impl_;
     };
 };
