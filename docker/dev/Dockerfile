@@ -67,3 +67,25 @@ RUN git clone https://github.com/nlohmann/json.git /json \
     && make install \
     && cd / \
     && rm -rf /json
+
+# install eigen
+ARG eigen_version=3.3.5
+RUN git clone --branch $eigen_version https://github.com/eigenteam/eigen-git-mirror.git /eigen \
+    && mkdir /eigen/build \
+    && cd /eigen/build \
+    && cmake .. \
+    && make install \
+    && cd / \
+    && rm -rf /eigen
+
+# install fmt
+ARG fmt_version=6.0.0
+RUN git clone --branch $fmt_version https://github.com/fmtlib/fmt.git /fmt \
+    && mkdir /fmt/build \
+    && cd /fmt/build \
+    && cmake .. -DFMT_TEST=OFF \
+    && make install \
+    && cd / \
+    && rm -rf /fmt
+
+
