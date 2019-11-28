@@ -1,4 +1,5 @@
 
+#include "constants.h"
 #include "DIPCSim.h"
 #include "RosInterface.h"
 
@@ -34,7 +35,8 @@ int main(int argc, char** argv)
 
     // start DIPCSim
     auto sim = std::make_shared<nereid::DIPCSim>();
-    sim->init(0.0, 3.14159, 0.0);
+    nereid::DIPC::Params params = {1.5, 0.5, 0.75, 0.5, 0.75};
+    sim->init(0.0, PI, 0.0, params);
 
     // use ros clock
     rclcpp::Clock clock;

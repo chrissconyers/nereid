@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "DIPC.h"
+
 #include <memory>
 #include <string>
 
@@ -13,7 +15,7 @@ namespace nereid
         DIPCSim(void);
         ~DIPCSim(void);
 
-        void init(double x, double theta_1, double theta_2);
+        void init(double x, double theta_1, double theta_2, const DIPC::Params& params);
         void tick(double dt);
 
         std::string stateStr(void);
