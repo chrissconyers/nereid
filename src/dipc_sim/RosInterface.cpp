@@ -23,6 +23,7 @@ RosInterface::RosInterface(void)
 {
     impl_->state_pub = this->create_publisher<std_msgs::msg::String>("dipc_state", 10);
 
+#if 0
     // a test subscriber
     auto callback =
     [this](const std_msgs::msg::String::SharedPtr msg) -> void
@@ -30,6 +31,7 @@ RosInterface::RosInterface(void)
         std::cout << "I heard: [" << msg->data.c_str() << "]" << std::endl;
     };
     impl_->test_sub = this->create_subscription<std_msgs::msg::String>("dipc_state", 10, callback);
+#endif
 }
 
 RosInterface::~RosInterface(void){}
