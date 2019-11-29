@@ -12,6 +12,8 @@
 
         // mount this users .ssh directory to gain access to ssh keys for repo access
         "-v", "${env:HOME}/.ssh:/home/vscode/.ssh:ro",
+        "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
+        "-e", "DISPLAY",
 
         // use the focus development docker network
         "--net=host",

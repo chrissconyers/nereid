@@ -88,4 +88,5 @@ RUN git clone --branch $fmt_version https://github.com/fmtlib/fmt.git /fmt \
     && cd / \
     && rm -rf /fmt
 
-
+# install gazebo
+RUN apt-get install -y ros-eloquent-gazebo-ros-pkgs
