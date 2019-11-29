@@ -12,7 +12,7 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/install/bin",
-            "environment": [{"name": "LD_LIBRARY_PATH", "value": "/ros2-linux/lib"}],
+            "environment": [{"name": "LD_LIBRARY_PATH", "value": "/opt/ros/eloquent/lib"}],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
