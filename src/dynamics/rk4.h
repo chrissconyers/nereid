@@ -8,6 +8,6 @@ namespace nereid
 {
 namespace propagation
 {
-    State rk4(const State& x, float dt, const ODESystem& system);
+    State rk4(const State& x, const Input& u, float dt, const ODESystem& system);
 }
 }

@@ -20,7 +20,7 @@ namespace nereid
 
         void setParams(const Params& params);
 
-        State f(const State& x) const;
+        State f(const State& x, const Input& u) const;
 
         static std::string to_json(const State& x);
 

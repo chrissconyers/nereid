@@ -36,7 +36,9 @@ int main(int argc, char** argv)
     // start DIPCSim
     auto sim = std::make_shared<nereid::DIPCSim>();
     nereid::DIPC::Params params = {1.5, 0.5, 0.75, 0.5, 0.75};
-    sim->init(0.0, PI, 0.0, params);
+    //sim->init(0, 0, 0, params);
+    //sim->init(0, Constants::pi/8, 0, params);
+    sim->init(10, Constants::pi*2, Constants::pi*2, params);
 
     // use ros clock
     rclcpp::Clock clock;
@@ -47,7 +49,7 @@ int main(int argc, char** argv)
     {
         // sleep
         using namespace std::chrono_literals;
-        std::this_thread::sleep_for(10ms);
+        std::this_thread::sleep_for(100ms);
 
         // tick
         auto new_time = clock.now();

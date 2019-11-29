@@ -6,4 +6,5 @@
 namespace nereid
 {
     typedef Eigen::VectorXd State;
+    typedef Eigen::VectorXd Input;
 }

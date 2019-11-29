@@ -11,6 +11,6 @@ namespace nereid
     {
     public:
         virtual ~ODESystem(void) {}
-        virtual State f(const State& x) const = 0;
+        virtual State f(const State& x, const Input& u) const = 0;
     };
 }
