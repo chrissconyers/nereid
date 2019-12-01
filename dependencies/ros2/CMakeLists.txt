@@ -21,5 +21,6 @@ target_link_libraries(
     rcutils
     tracetools
     std_msgs__rosidl_typesupport_cpp
+    visualization_msgs__rosidl_typesupport_cpp
     pthread
 )
