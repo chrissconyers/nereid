@@ -7,6 +7,7 @@ add_executable (
 )
 target_link_libraries (
     dipc_viz
+    dipc
     fmt
     ros2
 )
