@@ -12,6 +12,7 @@ namespace nereid
         RosInterface(void);
         ~RosInterface(void);
 
+        void publishParams(std::string params_str);
         void publishState(std::string state_str);
 
     private:

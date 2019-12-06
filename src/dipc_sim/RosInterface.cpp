@@ -10,6 +10,7 @@ class RosInterface::PrivateImpl
 {
 public:
 
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr params_pub;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr test_sub;
 
@@ -21,6 +22,7 @@ RosInterface::RosInterface(void)
 : rclcpp::Node("dipc_sim")
 , impl_(std::make_unique<PrivateImpl>())
 {
+    impl_->params_pub = this->create_publisher<std_msgs::msg::String>("dipc_params", 10);
     impl_->state_pub = this->create_publisher<std_msgs::msg::String>("dipc_state", 10);
 
 #if 0
@@ -36,6 +38,13 @@ RosInterface::RosInterface(void)
 
 RosInterface::~RosInterface(void){}
 
+
+void RosInterface::publishParams(std::string params_str)
+{
+    auto message = std_msgs::msg::String();
+    message.data = params_str;
+    impl_->params_pub->publish(message);
+}
 
 void RosInterface::publishState(std::string state_str)
 {

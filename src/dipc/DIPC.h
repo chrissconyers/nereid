@@ -16,6 +16,9 @@ namespace nereid
             double m2;  // mass of second pendulum
             double L1;  // length of first pendulum
             double L2;  // length of second pendulum
+
+            static std::string to_json(const Params& params);
+            static Params from_json(const std::string json_str);
         };
 
         void setParams(const Params& params);
@@ -23,6 +26,7 @@ namespace nereid
         State f(const State& x, const Input& u) const;
 
         static std::string to_json(const State& x);
+        static State from_json(const std::string json_str);
 
     private:
         // primary parameters

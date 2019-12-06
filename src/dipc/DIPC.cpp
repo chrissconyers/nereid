@@ -71,6 +71,38 @@ std::string DIPC::to_json(const State& x)
     return json.dump();
 }
 
+State DIPC::from_json(const std::string json_str)
+{
+    auto json = nlohmann::json::parse(json_str);
+    State x = (Eigen::VectorXd(6) <<
+        json["x"][0],
+        json["x"][1],
+        json["x"][2],
+        json["x"][3],
+        json["x"][4],
+        json["x"][5]
+        ).finished();
+    return x;
+}
+
+std::string DIPC::Params::to_json(const Params& params)
+{
+    nlohmann::json json;
+    json["m0"] = params.m0;
+    json["m1"] = params.m1;
+    json["m2"] = params.m2;
+    json["L1"] = params.L1;
+    json["L2"] = params.L2;
+    return json.dump();
+}
+
+DIPC::Params DIPC::Params::from_json(const std::string json_str)
+{
+    auto json = nlohmann::json::parse(json_str);
+    //Params params = 
+    return {json["m0"], json["m1"], json["m2"], json["L1"], json["L2"]};
+}
+
 void DIPC::computeConstants(void)
 {
     d1_ = p_.m0 + p_.m1 + p_.m2;
