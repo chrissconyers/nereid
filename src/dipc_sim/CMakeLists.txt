@@ -4,8 +4,8 @@ add_executable (
     App.cpp
     DIPCSim.h
     DIPCSim.cpp
-    RosInterface.h
-    RosInterface.cpp
+    DIPCSimNode.h
+    DIPCSimNode.cpp
 )
 target_link_libraries(
     dipc_sim
