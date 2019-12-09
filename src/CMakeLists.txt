@@ -4,3 +4,6 @@ add_subdirectory(dipc)
 add_subdirectory(dipc_sim)
 add_subdirectory(dipc_viz)
 add_subdirectory(dynamics)
+
+# controllers
+add_subdirectory(dipc_ctrl_pd)
