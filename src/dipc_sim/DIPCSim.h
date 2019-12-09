@@ -17,6 +17,7 @@ namespace nereid
 
         void init(double x, double theta_1, double theta_2, const DIPC::Params& params);
         void tick(double dt);
+        void setInput(const Input& input);
 
         std::string stateStr(void);
 

@@ -16,9 +16,11 @@ public:
     rclcpp::Clock clock;
     rclcpp::TimerBase::SharedPtr sim_timer;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr ctrl_sub;
 
     DIPCSim sim;
     rclcpp::Time last_tick_time;
+    Input last_input;
 
     std::unique_ptr<std::thread> init_thread;
 
@@ -31,6 +33,12 @@ DIPCSimNode::DIPCSimNode(void)
 {
     // setup publishers
     impl_->state_pub = this->create_publisher<std_msgs::msg::String>("dipc_state", 10);
+
+    // subscribe to dipc ctrl
+    impl_->ctrl_sub = this->create_subscription<std_msgs::msg::String>("dipc_ctrl", 10,
+        [&](const std_msgs::msg::String::SharedPtr msg){
+            impl_->last_input = DIPC::input_from_json(msg->data);
+    } );
 
     // kick off init function, which will then start worker threads
     impl_->init_thread = std::make_unique<std::thread>([this](void){this->init();});
@@ -58,6 +66,7 @@ void DIPCSimNode::init(void)
     // prepare the DIPC sim
     impl_->sim.init(0, Constants::pi/8, 0, params);
     impl_->last_tick_time = impl_->clock.now();
+    impl_->last_input = (Eigen::VectorXd(1) << 0.0).finished();
 
     // start the main worker thread
     using namespace std::chrono_literals;
@@ -72,10 +81,11 @@ void DIPCSimNode::PrivateImpl::run(void)
     last_tick_time = tick_time;
 
     // tick the simulation
+    sim.setInput(last_input);
     sim.tick(dt);
 
     // publish state at end of this tick
-    auto message = std_msgs::msg::String();
+    std_msgs::msg::String message;
     message.data = sim.stateStr();
     state_pub->publish(message);
 }

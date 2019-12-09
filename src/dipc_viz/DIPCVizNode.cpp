@@ -91,7 +91,7 @@ void DIPCVizNode::PrivateImpl::updateState(const std_msgs::msg::String::SharedPt
         return;
 
     // convert state message
-    State state = DIPC::from_json(msg->data);
+    State state = DIPC::state_from_json(msg->data);
 
     // some reusable bits
     auto time = clock.now();

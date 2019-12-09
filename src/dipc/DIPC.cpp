@@ -52,13 +52,13 @@ State DIPC::f(const State& x, const Input& u) const
     A2.tail(3) = -D_inv*G;
 
     Eigen::VectorXd A3 = Eigen::VectorXd::Zero(6);
-    A3.tail(3) = -D_inv*H;
+    A3.tail(3) = D_inv*H;
 
     return A1*x + A2 + A3*u;
 }
 
 // I'm sure there's a better way to do this
-std::string DIPC::to_json(const State& x)
+std::string DIPC::state_to_json(const State& x)
 {
     nlohmann::json json;
     json["x"] = {};
@@ -71,7 +71,7 @@ std::string DIPC::to_json(const State& x)
     return json.dump();
 }
 
-State DIPC::from_json(const std::string json_str)
+State DIPC::state_from_json(const std::string json_str)
 {
     auto json = nlohmann::json::parse(json_str);
     State x = (Eigen::VectorXd(6) <<
@@ -83,6 +83,23 @@ State DIPC::from_json(const std::string json_str)
         json["x"][5]
         ).finished();
     return x;
+}
+
+std::string DIPC::input_to_json(const Input& u)
+{
+    nlohmann::json json;
+    json["u"] = {};
+    json["u"].push_back(u(0));
+    return json.dump();
+}
+
+Input DIPC::input_from_json(const std::string json_str)
+{
+    auto json = nlohmann::json::parse(json_str);
+    Input u = (Eigen::VectorXd(1) <<
+        json["u"][0]
+        ).finished();
+    return u;
 }
 
 std::string DIPC::Params::to_json(const Params& params)

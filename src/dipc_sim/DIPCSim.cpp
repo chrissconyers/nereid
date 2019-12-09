@@ -13,12 +13,14 @@ class DIPCSim::PrivateImpl
 public:
     DIPC dipc;
     State state;
+    Input input;
 };
 
 
 DIPCSim::DIPCSim(void)
 : impl_(std::make_unique<PrivateImpl>())
 {
+    impl_->input = (Eigen::VectorXd(1) << 0.0).finished();
 }
 
 DIPCSim::~DIPCSim(void)
@@ -33,14 +35,18 @@ void DIPCSim::init(double theta_0, double theta_1, double theta_2, const DIPC::P
 
 void DIPCSim::tick(double dt)
 {
-    Input input = (Eigen::VectorXd(1) << 0.0).finished();
-    State new_state = propagation::rk4(impl_->state, input, dt, impl_->dipc);
+    State new_state = propagation::rk4(impl_->state, impl_->input, dt, impl_->dipc);
     impl_->state = new_state;
+}
+
+void DIPCSim::setInput(const Input& input)
+{
+    impl_->input = input;
 }
 
 std::string DIPCSim::stateStr(void)
 {
-    return DIPC::to_json(impl_->state);
+    return DIPC::state_to_json(impl_->state);
 }
 
 }

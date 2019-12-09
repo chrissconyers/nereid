@@ -25,8 +25,10 @@ namespace nereid
 
         State f(const State& x, const Input& u) const;
 
-        static std::string to_json(const State& x);
-        static State from_json(const std::string json_str);
+        static std::string state_to_json(const State& x);
+        static State state_from_json(const std::string json_str);
+        static std::string input_to_json(const Input& u);
+        static Input input_from_json(const std::string json_str);
 
     private:
         // primary parameters
