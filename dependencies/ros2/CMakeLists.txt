@@ -20,6 +20,7 @@ target_link_libraries(
     rcl
     rcutils
     tracetools
+    rcl_interfaces__rosidl_typesupport_cpp
     std_msgs__rosidl_typesupport_cpp
     geometry_msgs__rosidl_typesupport_cpp
     visualization_msgs__rosidl_typesupport_cpp

@@ -7,11 +7,11 @@
 namespace nereid
 {
 
-class DIPCViz : public rclcpp::Node
+class DIPCVizNode : public rclcpp::Node
 {
 public:
-    DIPCViz(void);
-    ~DIPCViz(void);
+    DIPCVizNode(void);
+    ~DIPCVizNode(void);
 
 private:
     class PrivateImpl;

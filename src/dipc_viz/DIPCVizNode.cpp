@@ -1,5 +1,5 @@
 
-#include "DIPCViz.h"
+#include "DIPCVizNode.h"
 
 #include "constants.h"
 #include "DIPC.h"
@@ -8,8 +8,10 @@
 #include "tf2/LinearMath/Quaternion.h"
 #include "std_msgs/msg/string.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
+//#include "rcl_interfaces/msg/parameter_event.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 
+#include <fmt/core.h>
 #include <chrono>
 using namespace std::chrono_literals;
 
@@ -17,7 +19,7 @@ using namespace std::chrono_literals;
 namespace nereid
 {
 
-class DIPCViz::PrivateImpl
+class DIPCVizNode::PrivateImpl
 {
 public:
     rclcpp::Clock clock;
@@ -28,6 +30,9 @@ public:
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr params_sub;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr state_sub;
 
+    rclcpp::SyncParametersClient::SharedPtr param_client;
+    rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr param_sub;
+
     std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster = nullptr;
 
 
@@ -35,9 +40,13 @@ public:
 
     void updateState(const std_msgs::msg::String::SharedPtr msg);
     void sendMarkers(void);
+
+    void getAllParams(void);
+    void handleParamEvent(const rcl_interfaces::msg::ParameterEvent::SharedPtr event);
+    void updateParam(const rcl_interfaces::msg::Parameter& param);
 };
 
-DIPCViz::DIPCViz(void)
+DIPCVizNode::DIPCVizNode(void)
 : rclcpp::Node("dipc_viz")
 , impl_(std::make_unique<PrivateImpl>())
 {
@@ -49,6 +58,13 @@ DIPCViz::DIPCViz(void)
         [&](const std_msgs::msg::String::SharedPtr msg){
             impl_->params = DIPC::Params::from_json(msg->data);
     } );
+
+    impl_->param_client = std::make_shared<rclcpp::SyncParametersClient>(this, "dipc_sim");
+    while (!impl_->param_client->wait_for_service(1s));
+    impl_->param_sub = impl_->param_client->on_parameter_event(
+        [&](const rcl_interfaces::msg::ParameterEvent::SharedPtr event)
+            {impl_->handleParamEvent(event);});
+    impl_->getAllParams();
 
     // state subscriber
     impl_->state_sub = this->create_subscription<std_msgs::msg::String>("dipc_state", 10,
@@ -65,11 +81,11 @@ DIPCViz::DIPCViz(void)
     } );
 }
 
-DIPCViz::~DIPCViz(void)
+DIPCVizNode::~DIPCVizNode(void)
 {
 }
 
-void DIPCViz::PrivateImpl::updateState(const std_msgs::msg::String::SharedPtr msg)
+void DIPCVizNode::PrivateImpl::updateState(const std_msgs::msg::String::SharedPtr msg)
 {
     if (!tf_broadcaster)
         return;
@@ -100,8 +116,8 @@ void DIPCViz::PrivateImpl::updateState(const std_msgs::msg::String::SharedPtr ms
     tfstamped.header.frame_id = "ned";
     tfstamped.header.stamp = time;
     tfstamped.child_frame_id = "cart";
-    tfstamped.transform.translation.x = 0.0;
-    //tfstamped.transform.translation.x = state[0];
+    //tfstamped.transform.translation.x = 0.0;
+    tfstamped.transform.translation.x = state[0];
     tfstamped.transform.translation.y = 0.0;
     tfstamped.transform.translation.z = 0.0;
     tfstamped.transform.rotation.x = 0.0;
@@ -161,7 +177,7 @@ void DIPCViz::PrivateImpl::updateState(const std_msgs::msg::String::SharedPtr ms
     tf_broadcaster->sendTransform(tfstamped);
 }
 
-void DIPCViz::PrivateImpl::sendMarkers(void)
+void DIPCVizNode::PrivateImpl::sendMarkers(void)
 {
     auto time = clock.now();
     visualization_msgs::msg::Marker marker;
@@ -213,6 +229,32 @@ void DIPCViz::PrivateImpl::sendMarkers(void)
     marker.color.b = 1.0;
     marker.color.a = 1.0;
     marker_pub->publish(marker);
+}
+
+void DIPCVizNode::PrivateImpl::getAllParams(void)
+{
+    for (auto& param : param_client->get_parameters({"m0", "m1", "m2", "L1", "L2"}))
+        updateParam(param.to_parameter_msg());
+}
+
+void DIPCVizNode::PrivateImpl::handleParamEvent(const rcl_interfaces::msg::ParameterEvent::SharedPtr event)
+{
+    for(auto param : event->changed_parameters)
+        updateParam(param);
+}
+
+void DIPCVizNode::PrivateImpl::updateParam(const rcl_interfaces::msg::Parameter& param)
+{
+    if (param.name == "m0")
+        params.m0 = param.value.double_value;
+    else if (param.name == "m1")
+        params.m1 = param.value.double_value;
+    else if (param.name == "m2")
+        params.m2 = param.value.double_value;
+    else if (param.name == "L1")
+        params.L1 = param.value.double_value;
+    else if (param.name == "L2")
+        params.L2 = param.value.double_value;
 }
 
 }
